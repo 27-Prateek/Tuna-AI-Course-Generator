@@ -3,7 +3,7 @@
 import { useState, useEffect, useContext } from "react";
 import { HiMiniSquares2X2, HiSquare3Stack3D } from "react-icons/hi2";
 import { Button } from "../../components/ui/button";
-
+import LoadingDialog from "./_components/LoadingDialog";
 import SelectCategory from "./_components/SelectCategory";
 import TopDescription from "./_components/TopDescription";
 import SelectOption from "./_components/SelectOption";
@@ -18,7 +18,67 @@ function CreateCourse() {
   ];
 
   const [activateIndex, setActivateIndex] = useState(0);
+  
   const { userCourseInput } = useContext(UserInputContext);
+  
+  // const GenerateCourseLayout=async()=>{
+  //   SetLoading(true)
+  //   const BASIC_PROMPT='Generate A Course Tutorial on Following Detail With field as Course Name, Description, Along with Chapter Name, about, Duration: '
+  //   const USER_INPUT_PROMPT='Category: '+userCourseInput?.category+", Topic: "+userCourseInput?.topic+", Level: "+userCourseInput?.difficulty+", Duration: "+userCourseInput?.duration+", No of Chapters:"+userCourseInput.chapters+", in JSON format"
+  //   const FINAL_PROMPT=BASIC_PROMPT+USER_INPUT_PROMPT
+  //   console.log(FINAL_PROMPT);
+  //   const result=await GenerateCourseLayout.sendMessage
+  //   console.log(result.response?.text());
+  //   console.log(JSON.parse(result.response?.text()))
+  //   setLoading(false);
+  // }
+const [loading, setLoading] = useState(false);
+
+const GenerateCourseLayout = async () => {
+  try {
+    setLoading(true);
+
+    const BASIC_PROMPT =
+      "Generate a course tutorial with fields: courseName, description, chapters (array). Each chapter should include chapterName, about, duration.";
+
+    const USER_INPUT_PROMPT =
+      "Category: " +
+      userCourseInput.category +
+      ", Topic: " +
+      userCourseInput.topic +
+      ", Level: " +
+      userCourseInput.difficulty +
+      ", Duration: " +
+      userCourseInput.duration +
+      ", No of Chapters: " +
+      userCourseInput.chapters;
+
+    const FINAL_PROMPT = BASIC_PROMPT + " " + USER_INPUT_PROMPT;
+
+    console.log("PROMPT →", FINAL_PROMPT);
+
+    const res = await fetch("/api/generate-course", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: FINAL_PROMPT }),
+    });
+
+    const result = await res.json();
+
+    console.log("AI RESULT →", result);
+
+    // OPTIONAL
+    // setCourseLayout(result);
+
+  } catch (error) {
+    console.error("GenerateCourseLayout error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const checkStatus = () => {
     if (activateIndex === 0) {
@@ -123,6 +183,7 @@ function CreateCourse() {
             <Button
               disabled={checkStatus()}
               onClick={() => {
+                GenerateCourseLayout()
                 console.log("FINAL SUBMIT:", userCourseInput);
               }}
             >
@@ -131,6 +192,7 @@ function CreateCourse() {
           )}
         </div>
       </div>
+      <LoadingDialog loading={loading}/>
     </div>
   );
 }
