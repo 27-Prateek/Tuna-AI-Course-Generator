@@ -110,6 +110,7 @@ export async function saveCourseLayout({
     name: userCourseInput.topic,
     level: userCourseInput.difficulty,
     category: userCourseInput.category,
+    includeVideo: userCourseInput.includeVideo ?? "Yes",
     courseOutput: courseLayout,
     createdBy: userInfo.email,
     userName: userInfo.name,

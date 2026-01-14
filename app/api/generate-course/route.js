@@ -136,6 +136,7 @@ chapters (array)
 
 Each chapter must include:
 - chapterName
+- duration
 - explanation
 - keyPoints
 - examples

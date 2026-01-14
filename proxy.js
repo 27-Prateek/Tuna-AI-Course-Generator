@@ -98,8 +98,6 @@
 //   ],
 // }
 
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
 
 // const isProtectedRoute = createRouteMatcher([
 //   '/dashboard(.*)',
@@ -118,6 +116,8 @@ import { NextResponse } from 'next/server'
 //   return NextResponse.next()
 // })
 
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
 
 const isPublicRoute = createRouteMatcher([
@@ -136,6 +136,7 @@ export default clerkMiddleware((auth, req) => {
 export const config = {
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|png|svg|woff2?|ico)).*)",
-    "/(api|trpc)(.*)",
+    "/api/(.*)",
   ],
 };
+// "/(api|trpc)(.*)",
