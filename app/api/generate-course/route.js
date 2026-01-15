@@ -1,3 +1,89 @@
+// import { NextResponse } from "next/server";
+// import { run } from "@/configs/AiModel";
+
+// export async function POST(req) {
+//   try {
+//     const body = await req.json();
+
+//     const { category, topic, difficulty, duration, chapters } = body;
+
+//     // Validate input
+//     if (!category || !topic || !difficulty || !duration || !chapters) {
+//       return NextResponse.json(
+//         { error: "Missing required fields" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // STRICT JSON PROMPT
+//     const prompt = `
+// You are an API that returns ONLY valid JSON.
+// No explanations. No markdown. No extra text.
+
+// Return JSON EXACTLY in this format:
+
+// {
+//   "courseName": string,
+//   "description": string,
+//   "duration": string,
+//   "category": string,
+//   "difficulty": string,
+//   "chapters": [
+//     {
+//       "chapterName": string,
+//       "duration": string,
+//       "explanation": string,
+//       "keyPoints": string[],
+//       "examples": string[]
+//     }
+//   ]
+// }
+
+// Course details:
+// Category: ${category}
+// Topic: ${topic}
+// Difficulty: ${difficulty}
+// Duration: ${duration}
+// Number of chapters: ${chapters}
+// `;
+
+//     const raw = await run(prompt);
+//     console.log("🧠 RAW AI RESPONSE:", raw);
+
+//     if (!raw) {
+//       throw new Error("Empty AI response");
+//     }
+
+//     // SAFE JSON EXTRACTION
+//     let parsed;
+//     try {
+//       const match = raw.match(/\{[\s\S]*\}/);
+//       if (!match) throw new Error("No JSON found");
+
+//       parsed = JSON.parse(match[0]);
+//     } catch (err) {
+//       console.error("❌ JSON PARSE ERROR");
+//       console.error(raw);
+//       throw new Error("Invalid AI JSON output");
+//     }
+
+//     return NextResponse.json({
+//       success: true,
+//       data: parsed,
+//     });
+
+//   } catch (err) {
+//     console.error("❌ AI route error:", err);
+
+//     return NextResponse.json(
+//       {
+//         error: "AI failed",
+//         message: err.message,
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }
 // // // import { NextResponse } from "next/server";
 // // // import { run } from "@/configs/AiModel";
 
