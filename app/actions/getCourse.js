@@ -5,7 +5,7 @@ import { db } from "@/configs/db"
 import { courseList } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 
-export async function getCourse(courseId, email) {
+export async function getCourse(courseId,email) {
   return await db
     .select()
     .from(courseList)

@@ -1,4 +1,6 @@
 import React from 'react'
+import Link from "next/link";
+import { Button } from "../../components/ui/button";
 
 function Hero() {
   return (
@@ -16,9 +18,14 @@ function Hero() {
       </p>
 
       <div className="mt-4 flex gap-4 sm:mt-6">
-        <a className="inline-block rounded border border-[#5cbfb5] bg-[#5cbfb5] px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-[#58aea6] " href="#">
+        {/* <a className="inline-block rounded border border-[#5cbfb5] bg-[#5cbfb5] px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-[#58aea6] " href="#">
           Get Started
-        </a>
+        </a> */}
+        <Link href="/dashboard">
+        <Button className="bg-[#5cbfb5] text-white hover:bg-[#4fb3a9]">
+          Get Started
+        </Button>
+      </Link>
 
         {/* <a className="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900" href="#">
           Learn More

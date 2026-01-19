@@ -1,103 +1,77 @@
 
-
- 
-// "use client"
-// import ChapterList from "./_components/ChapterList"
-// import CourseDetail from "./_components/CourseDetail"
-// import CourseBasicinfo from "./_components/CourseBasicinfo"
-// import { useUser } from "@clerk/nextjs"
-// import { useParams } from "next/navigation"
-// import React, { useEffect, useState } from "react"
-// import { getCourse } from "@/app/actions/getCourse"
-
-// function CourseLayout() {
-//   const { user, isLoaded } = useUser()
-//   const { courseId } = useParams()
-//   const [course, setCourse] = useState([])
-
-//   useEffect(() => {
-//     if (isLoaded && user && courseId) {
-//       fetchCourse()
-//     }
-//   }, [isLoaded, user, courseId])
-
-//   const fetchCourse = async () => {
-//     const result = await getCourse(
-//       courseId,
-//       user.primaryEmailAddress.emailAddress
-//     )
-
-//     console.log(result)     // ✅ ARRAY PRINTED
-//     setCourse(result)
-//   }
-
-//   return (
-//     <div className="mt-10 px-7 md:px-20 lg:px-44">
-//       <h2 className="font-bold text-center text-2xl">
-//         Course Layout
-//       </h2>
-//       {/* basix info */}
-//       <CourseBasicinfo course={course}/>
-
-//       {/* course details */}
-//       <CourseDetail course={course}/>
-
-//       {/* list fo lesson */}
-//       <ChapterList course={course}/>
-
-//     </div>
-//   )
-// }
-
-// export default CourseLayout
-
-
 "use client";
 
-import ChapterList from "./_components/ChapterList";
-import CourseDetail from "./_components/CourseDetail";
-import CourseBasicinfo from "./_components/CourseBasicinfo";
+import { generateChapters } from "@/app/actions/generateChapters";
 import { useUser } from "@clerk/nextjs";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { getCourse } from "@/app/actions/getCourse";
+import CourseBasicinfo from "./_components/CourseBasicinfo";
+import CourseDetail from "./_components/CourseDetail";
+import ChapterList from "./_components/ChapterList";
+import { Button } from "@/components/ui/button";
 
 function CourseLayout() {
   const { user, isLoaded } = useUser();
   const { courseId } = useParams();
+  const router = useRouter();
+
+  const resolvedCourseId = Array.isArray(courseId)
+    ? courseId[0]
+    : courseId;
+
   const [course, setCourse] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && user && courseId) {
+    if (isLoaded && user && resolvedCourseId) {
       fetchCourse();
     }
-  }, [isLoaded, user, courseId]);
+  }, [isLoaded, user, resolvedCourseId]);
 
   const fetchCourse = async () => {
     const result = await getCourse(
-      courseId,
+      resolvedCourseId,
       user.primaryEmailAddress.emailAddress
     );
     setCourse(result);
+    // console.log(result);
   };
 
-  // ✅ THIS IS THE IMPORTANT PART
-  const handleBasicInfoUpdate = ({ courseName, description }) => {
-    setCourse((prev) => {
-      if (!prev?.length) return prev;
+  // ✅ FIXED LOGIC
+  const GenerateChapterContent = async () => {
+    if (!course?.length || loading) return;
 
-      return [
-        {
-          ...prev[0],
-          courseOutput: {
-            ...prev[0].courseOutput,
-            courseName,
-            description,
-          },
-        },
-      ];
-    });
+    const createdCount = course[0].numberOfChaptersCreated;
+
+    setLoading(true);
+    try {
+      
+      if (createdCount === 0) {
+        await generateChapters(resolvedCourseId);
+
+        const updated = await getCourse(
+          resolvedCourseId,
+          user.primaryEmailAddress.emailAddress
+        );
+        setCourse(updated);
+
+        router.push(`/create-course/${resolvedCourseId}/1`);
+        return;
+      }
+
+      // 🔹 CASE 2: Chapters already exist → just open Chapter 1
+      router.push(`/create-course/${resolvedCourseId}/1`);
+    } catch (err) {
+      console.error("Generation failed", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // 🔹 Button label
+  const nextChapterNumber =
+    (course?.[0]?.numberOfChaptersCreated ?? 0) + 1;
 
   return (
     <div className="mt-10 px-7 md:px-20 lg:px-44">
@@ -105,17 +79,19 @@ function CourseLayout() {
         Course Layout
       </h2>
 
-      {/* basic info */}
-      <CourseBasicinfo
-        course={course}
-        onBasicInfoUpdate={handleBasicInfoUpdate}
-      />
-
-      {/* course details */}
+      <CourseBasicinfo course={course} />
       <CourseDetail course={course} />
-
-      {/* chapter list */}
       <ChapterList course={course} />
+
+      <Button
+        disabled={loading}
+        onClick={GenerateChapterContent}
+        className="my-10 bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        {loading
+          ? `Opening Chapter ${nextChapterNumber}...`
+          : `Open Chapter 1`}
+      </Button>
     </div>
   );
 }

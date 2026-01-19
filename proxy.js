@@ -1,130 +1,120 @@
-// // // // // import { clerkMiddleware } from '@clerk/nextjs/server';
+// // // import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// // // // // const isProtectedRoute=createRouteMatcher(
-// // // // //   ['dashboard(.*)']
-// // // // // )
-// // // // // export default clerkMiddleware();
-// // // // import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+// // // const isPublicRoute = createRouteMatcher([
+// // //   "/",                         // landing page
+// // //   "/sign-in(.*)",
+// // //   "/sign-up(.*)",
+// // //   "/.well-known(.*)",
 
-// // // // const isProtectedRoute = createRouteMatcher([
-// // // //   '/dashboard(.*)',
-// // // // ]);
+// // //   // ✅ PUBLIC COURSE ROUTES
+// // //   "/course/(.*)",
+  
+// // //          // course/[courseId] + chapters
+// // // ]);
 
-// // // // export default clerkMiddleware((auth, req) => {
-// // // //   if (isProtectedRoute(req)) {
-// // // //     auth().protect();
-// // // //   }
-// // // // });
-// // // // export const config = {
-// // // //   matcher: [
-// // // //     // Skip Next.js internals and all static files, unless found in search params
-// // // //     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-// // // //     // Always run for API routes
-// // // //     '/(api|trpc)(.*)',
-// // // //   ],
-// // // // };
-
-// // // import { clerkMiddleware } from '@clerk/nextjs/server';
-
-// // // export default clerkMiddleware();
+// // // export default clerkMiddleware((auth, req) => {
+// // //   if (!isPublicRoute(req)) {
+// // //     auth.protect();
+// // //   }
+// // // });
 
 // // // export const config = {
 // // //   matcher: [
-// // //     // Skip Next.js internals and all static files, unless found in search params
-// // //     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-// // //     // Always run for API routes
-// // //     '/(api|trpc)(.*)',
+// // //     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|png|svg|woff2?|ico)).*)",
+// // //     "/api/(.*)",
 // // //   ],
 // // // };
-// // import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// // const isProtectedRoute = createRouteMatcher([
-// //   '/dashboard(.*)',
+
+// // import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+
+// // const isPublicRoute = createRouteMatcher([
+  
+// //   "/sign-in(.*)",
+// //   "/sign-up(.*)",
+// //   "/.well-known(.*)",
+
+// //   "/course/(.*)",
+// //  "/favicon.ico",
+// //   "/logo.svg",
+  
+// //   // ✅ WEBHOOKS MUST BE PUBLIC
+// //   "/api/webhooks/(.*)",
 // // ]);
 
 // // export default clerkMiddleware((auth, req) => {
-// //   if (isProtectedRoute(req)) {
-// //     auth().protect();
+// //   if (!isPublicRoute(req)) {
+// //     auth.protect();
 // //   }
 // // });
 
 // // export const config = {
 // //   matcher: [
-// //     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-// //     '/(api|trpc)(.*)',
+// //     "/((?!_next/static|_next/image|favicon.ico).*)",
+// //     "/api/(.*)",
 // //   ],
 // // };
-// // import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-// // import { NextResponse } from 'next/server'
+// import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// // const isProtectedRoute = createRouteMatcher([
-// //   '/dashboard(.*)',
-// // ])
+// const isPublicRoute = createRouteMatcher([
+//   // 🔓 Auth pages
+//   "/sign-in(.*)",
+//   "/sign-up(.*)",
 
-// // export default clerkMiddleware((auth, req) => {
-// //   const { userId } = auth()
+//   // 🔓 Well-known (OAuth, etc.)
+//   "/.well-known(.*)",
 
-// //   if (isProtectedRoute(req) && !userId) {
-// //     return NextResponse.redirect(new URL('/sign-in', req.url))
-// //   }
+//   // 🔓 Public pages
+//   "/course/(.*)",
+//   "public/(.*)",
 
-// //   return NextResponse.next()
-// // })
+//   // 🔓 Static assets (CRITICAL)
+//   "/favicon.ico",
+//   "/.*\\.png",
+//   "/.*\\.jpg",
+//   "/.*\\.jpeg",
+//   "/.*\\.svg",
+//   "/.*\\.webp",
 
-// // export const config = {
-// //   matcher: [
-// //     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-// //     '/(api|trpc)(.*)',
-// //   ],
-// // }
-// import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-
-// const isProtectedRoute = createRouteMatcher([
-//   '/dashboard(.*)',
-// ])
+//   // 🔓 Webhooks must be public
+//   "/api/webhooks/(.*)",
+// ]);
 
 // export default clerkMiddleware((auth, req) => {
-//   if (isProtectedRoute(req) && !auth().userId) {
-//     return auth().redirectToSignIn({
-//       returnBackUrl: req.url,
-//     })
+//   if (!isPublicRoute(req)) {
+//     auth.protect();
 //   }
-// })
+// });
 
 // export const config = {
 //   matcher: [
-//     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-//     '/(api|trpc)(.*)',
+//     // Run on everything except Next internals
+//     "/((?!_next).*)",
 //   ],
-// }
-
-
-// const isProtectedRoute = createRouteMatcher([
-//   '/dashboard(.*)',
-// ])
-
-// export default clerkMiddleware((auth, req) => {
-//   const { userId } = auth()
-
-//   if (isProtectedRoute(req) && !userId) {
-//     const signInUrl = new URL('/sign-in', req.url)
-//     signInUrl.searchParams.set('redirect_url', req.url)
-
-//     return NextResponse.redirect(signInUrl)
-//   }
-
-//   return NextResponse.next()
-// })
-
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
-
+// };
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
-  "/",
+  // 🔓 Auth pages
   "/sign-in(.*)",
   "/sign-up(.*)",
+
+  // 🔓 Well-known
   "/.well-known(.*)",
+
+  // 🔓 Public pages
+  "/course/(.*)",
+
+  // 🔓 Static assets (FIXED syntax)
+  "/favicon.ico",
+  "/(.*).png",
+  "/(.*).jpg",
+  "/(.*).jpeg",
+  "/(.*).svg",
+  "/(.*).webp",
+
+  // 🔓 Webhooks
+  "/api/webhooks/(.*)",
 ]);
 
 export default clerkMiddleware((auth, req) => {
@@ -135,8 +125,6 @@ export default clerkMiddleware((auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|png|svg|woff2?|ico)).*)",
-    "/api/(.*)",
+    "/((?!_next).*)",
   ],
 };
-// "/(api|trpc)(.*)",
