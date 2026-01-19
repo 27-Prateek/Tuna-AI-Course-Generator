@@ -19,8 +19,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    
     <ClerkProvider>
     <html lang="en">
+      <script
+  defer
+  data-website-id="0b767321-c3d5-4ee1-95b4-2d5485e889e7"
+  data-domain="https://tuna-ai-course-generator.vercel.app/"
+  src="https://insightica.vercel.app/analytics.js">
+</script>
         
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
